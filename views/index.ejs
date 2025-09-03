@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  
+</head>
+<body>
+
+    <!-- Include the navigation partial -->
+    <%- include('./parciais/nav.ejs') %>
+
+    <div class="conteudo-blog">
+        <h2>Bem-vindo ao Meu Blog!</h2>
+        <% if (blogs && blogs.length > 0) { %>
+            <ul>
+                <% blogs.forEach(blog => { %>
+                    <li>
+                        <h3><%= blog.titulo %></h3>
+                        <p><%= blog.conteudo %></p>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="sem-blogs">Nenhum blog encontrado. Que tal criar um novo? 😉</p>
+        <% } %>
+    </div>
+    <!-- Include the head partial -->
+    <%- include('./parciais/head.ejs', { titulo: 'Página Inicial do Blog' }) %>
+    <!-- Include the footer partial -->
+    <%- include('./parciais/footer.ejs') %>
+
+</body>
+</html>
