@@ -1,13 +1,20 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<%- include('parciais/head') %>
 
-<body>
-   
-    <%- include('./parciais/nav.ejs') %>
+    <body>
+        <%- include('parciais/nav') %>
 
-    <h1>Página Não Encontrada (404)</h1>
-    <p>Desculpe, a página que você está procurando não existe.</p>
-    <%- include('./parciais/head.ejs', { titulo: titulo }) %>
-    <%- include('./parciais/footer.ejs') %>
-</body>
-</html>
+            <main>
+                <div class="container text-center" style="padding: 4rem 2rem;">
+                    <h1 style="font-size: 4rem; color: var(--primary-color); margin-bottom: 1rem;">404</h1>
+                    <h2 style="margin-bottom: 1rem;">Página Não Encontrada</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 2rem;">Desculpe, a página que você está
+                        procurando não existe ou foi movida.</p>
+                    <a href="/" class="btn-submit"
+                        style="width: auto; display: inline-block; text-decoration: none;">Voltar para Home</a>
+                </div>
+            </main>
+
+            <%- include('parciais/footer') %>
+    </body>
+
+    </html>

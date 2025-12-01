@@ -1,32 +1,44 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  
-</head>
-<body>
+<%- include('parciais/head') %>
 
-    <!-- Include the navigation partial -->
-    <%- include('./parciais/nav.ejs') %>
+    <body>
+        <%- include('parciais/nav') %>
 
-    <div class="conteudo-blog">
-        <h2>Bem-vindo ao Meu Blog!</h2>
-        <% if (blogs && blogs.length > 0) { %>
-            <ul>
-                <% blogs.forEach(blog => { %>
-                    <li>
-                        <h3><%= blog.titulo %></h3>
-                        <p><%= blog.conteudo %></p>
-                    </li>
-                <% }) %>
-            </ul>
-        <% } else { %>
-            <p class="sem-blogs">Nenhum blog encontrado. Que tal criar um novo? 😉</p>
-        <% } %>
-    </div>
-    <!-- Include the head partial -->
-    <%- include('./parciais/head.ejs', { titulo: 'Página Inicial do Blog' }) %>
-    <!-- Include the footer partial -->
-    <%- include('./parciais/footer.ejs') %>
+            <main>
+                <div class="container">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                        <h2>Últimas Postagens</h2>
+                        <a href="/blog/criar" class="btn-submit"
+                            style="width: auto; padding: 0.5rem 1rem; text-decoration: none;">Novo Post</a>
+                    </div>
 
-</body>
-</html>
+                    <% if (blogs && blogs.length> 0) { %>
+                        <div class="blog-list">
+                            <% blogs.forEach(blog=> { %>
+                                <article class="blog-card">
+                                    <h3>
+                                        <%= blog.titulo %>
+                                    </h3>
+                                    <p>
+                                        <%= blog.conteudo.substring(0, 200) %>...
+                                    </p>
+                                    <a href="/blogs/<%= blog.id %>" class="btn-read-more">Ler mais &rarr;</a>
+                                </article>
+                                <% }) %>
+                        </div>
+                        <% } else { %>
+                            <div class="text-center" style="padding: 3rem;">
+                                <p class="text-muted" style="font-size: 1.2rem; margin-bottom: 1rem;">Nenhum blog
+                                    encontrado.</p>
+                                <a href="/blog/criar" class="btn-submit"
+                                    style="width: auto; display: inline-block; text-decoration: none;">Criar o primeiro
+                                    post</a>
+                            </div>
+                            <% } %>
+                </div>
+            </main>
+
+            <%- include('parciais/footer') %>
+    </body>
+
+    </html>

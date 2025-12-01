@@ -1,0 +1,36 @@
+<%- include('parciais/head') %>
+
+    <body>
+        <%- include('parciais/nav') %>
+
+            <main>
+                <div class="container">
+                    <article>
+                        <header
+                            style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                            <h1 style="font-size: 2.5rem; color: var(--primary-color);">
+                                <%= blog.titulo %>
+                            </h1>
+                            <p style="color: var(--text-muted);">Publicado em: <%= new
+                                    Date().toLocaleDateString('pt-BR') %> (Simulado)</p>
+                        </header>
+
+                        <div class="conteudo-post" style="font-size: 1.1rem; line-height: 1.8;">
+                            <p>
+                                <%= blog.conteudo %>
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 3rem;">
+                            <a href="/" class="btn-submit"
+                                style="width: auto; display: inline-block; text-decoration: none; background-color: var(--text-muted);">Voltar
+                                para Home</a>
+                        </div>
+                    </article>
+                </div>
+            </main>
+
+            <%- include('parciais/footer') %>
+    </body>
+
+    </html>
