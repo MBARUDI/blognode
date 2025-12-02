@@ -23,7 +23,8 @@ const sql = postgres(connectionString, {
     max: 1,             // 1 conexão por lambda para não estourar o limite do banco
     idle_timeout: 20,   // Fecha conexões ociosas rapidamente
     connect_timeout: 10,
-    ssl: 'require'      // Exige SSL (necessário para Supabase/Cloud)
+    ssl: 'require',     // Exige SSL (necessário para Supabase/Cloud)
+    prepare: false      // Necessário para o Supabase Connection Pooler (IPv4)
 });
 
 // Exemplo de verificação de conexão (opcional)
