@@ -31,7 +31,7 @@ app.get('/', async (req, res) => {
         res.render('index', { titulo: 'Home', blogs: posts });
     } catch (error) {
         console.error('Erro ao buscar posts:', error);
-        res.status(500).send('Erro ao buscar posts.');
+        res.status(500).send(`Erro ao buscar posts: ${error.message}`);
     }
 });
 
@@ -87,7 +87,12 @@ app.use((req, res) => {
 
 // --- INICIALIZAÇÃO ---
 
-app.listen(PORTA_WEB, () => {
-    console.log(`🚀 Servidor rodando na porta ${PORTA_WEB}`);
-    console.log(`Acesse: http://localhost:${PORTA_WEB}`);
-});
+// Apenas inicia o servidor se o arquivo for executado diretamente (não importado pelo Vercel)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORTA_WEB, () => {
+        console.log(`🚀 Servidor rodando na porta ${PORTA_WEB}`);
+        console.log(`Acesse: http://localhost:${PORTA_WEB}`);
+    });
+}
+
+export default app;

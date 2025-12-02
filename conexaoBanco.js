@@ -14,14 +14,16 @@ const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
     console.error("ERRO: A variável de ambiente DATABASE_URL não está definida.");
     // Encerra o processo se a configuração vital estiver faltando
-    process.exit(1); 
+    process.exit(1);
 }
 
 // Cria uma instância de conexão. Por padrão, cria um pool de conexões otimizado.
 const sql = postgres(connectionString, {
-    // Opções de configuração (opcional)
-    max: 20, // Define o número máximo de conexões no pool
-    connect_timeout: 10 // Tempo limite em segundos
+    // Configurações otimizadas para Serverless (Vercel)
+    max: 1,             // 1 conexão por lambda para não estourar o limite do banco
+    idle_timeout: 20,   // Fecha conexões ociosas rapidamente
+    connect_timeout: 10,
+    ssl: 'require'      // Exige SSL (necessário para Supabase/Cloud)
 });
 
 // Exemplo de verificação de conexão (opcional)
