@@ -1,29 +1,22 @@
-// app.js
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import sql from './conexaoBanco.js';
 
-const express = require('express');
 const app = express();
-const path = require('path');
-const conexao = require('./conexaoBanco'); // Importa a conexão do arquivo conexaoBanco.js
 
-// Define a porta do servidor WEB (Express).
-const PORTA_WEB = 3000; 
+// Configuração do __dirname para ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// --- CORREÇÃO 1: Middleware para Arquivos Estáticos (CSS, JS) ---
-// Adiciona a pasta 'public' para servir arquivos estáticos, permitindo que o CSS e o JS sejam carregados.
-app.use(express.static('public')); 
+// Define a porta do servidor WEB
+const PORTA_WEB = 3000;
 
-// Middleware para processar dados de formulário (body-parser)
+// Middleware para Arquivos Estáticos (CSS, JS)
+app.use(express.static('public'));
+
+// Middleware para processar dados de formulário
 app.use(express.urlencoded({ extended: true }));
-
-// Tentativa de conexão ao banco de dados
-conexao.connect(error => {
-    if (error) {
-        console.error('❌ Erro ao conectar ao banco de dados:', error);
-        // Em um projeto real, você pararia o servidor aqui se a conexão falhasse.
-    } else {
-        console.log("✅ Conectado ao banco de dados!");
-    }
-});
 
 // Configuração do View Engine (EJS)
 app.set('view engine', 'ejs');
@@ -31,46 +24,33 @@ app.set('views', path.join(__dirname, 'views'));
 
 // --- ROTAS ---
 
-// Rota principal: Exibe todos os blogs
-app.get('/', (req, res) => {
+// Rota principal: Exibe todos os posts
+app.get('/', async (req, res) => {
     try {
-        const sql = "SELECT * FROM blogs ORDER BY id DESC";
-        conexao.query(sql, (error, blogs) => {
-            if (error) {
-                console.error('Erro ao buscar blogs:', error);
-                // O erro ER_NO_SUCH_TABLE (1146) será pego aqui.
-                return res.status(500).send('Erro ao buscar blogs ou a tabela não existe.');
-            }
-            res.render('index', { titulo: 'Home', blogs: blogs });
-        });
-    } catch (e) {
-        res.status(500).send('Erro interno do servidor.');
+        const posts = await sql`SELECT * FROM posts ORDER BY id DESC`;
+        res.render('index', { titulo: 'Home', blogs: posts });
+    } catch (error) {
+        console.error('Erro ao buscar posts:', error);
+        res.status(500).send('Erro ao buscar posts.');
     }
 });
 
-// --- Rota Dinâmica (Adicionada para funcionalidade completa do Blog) ---
-// Rota para visualizar um único blog pelo ID.
-app.get('/blogs/:id', (req, res) => {
+// Rota para visualizar um único post pelo ID
+app.get('/blogs/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const sql = "SELECT * FROM blogs WHERE id = ?";
-        conexao.query(sql, [id], (error, result) => {
-            if (error) {
-                console.error('Erro ao buscar blog específico:', error);
-                return res.status(500).send('Erro ao buscar blog específico.');
-            }
-            if (result.length === 0) {
-                return res.status(404).render('404', { titulo: '404' });
-            }
-            // Assume que você tem um arquivo views/detalhes.ejs
-            res.render('detalhes', { blog: result[0], titulo: result[0].titulo });
-        });
-    } catch (e) {
+        const result = await sql`SELECT * FROM posts WHERE id = ${id}`;
+
+        if (result.length === 0) {
+            return res.status(404).render('404', { titulo: '404' });
+        }
+
+        res.render('detalhes', { blog: result[0], titulo: result[0].titulo });
+    } catch (error) {
+        console.error('Erro ao buscar post específico:', error);
         res.status(500).send('Erro interno do servidor.');
     }
 });
-// -----------------------------------------------------------------------
-
 
 // Rotas estáticas
 app.get('/sobre', (req, res) => {
@@ -83,25 +63,20 @@ app.get('/sobrenos', (req, res) => {
 
 // Rota para exibir o formulário de criação
 app.get('/blog/criar', (req, res) => {
-    res.render('criar', { titulo: 'Criar Blog' });
+    res.render('criar', { titulo: 'Criar Post' });
 });
 
-// Rota POST para inserir o blog no banco de dados
-app.post('/blogs', (req, res) => {
+// Rota POST para inserir o post no banco de dados
+app.post('/blogs', async (req, res) => {
     try {
         const { titulo, conteudo } = req.body;
-        
-        const sql = "INSERT INTO blogs (titulo, conteudo) VALUES (?, ?)";
-        
-        conexao.query(sql, [titulo, conteudo], (error, result) => {
-            if (error) {
-                console.error('Erro ao inserir blog:', error);
-                return res.status(500).send('Erro ao criar blog');
-            }
-            res.redirect('/');
-        });
-    } catch (e) {
-        res.status(500).send('Erro interno do servidor.');
+
+        await sql`INSERT INTO posts (titulo, conteudo) VALUES (${titulo}, ${conteudo})`;
+
+        res.redirect('/');
+    } catch (error) {
+        console.error('Erro ao inserir post:', error);
+        res.status(500).send('Erro ao criar post');
     }
 });
 
